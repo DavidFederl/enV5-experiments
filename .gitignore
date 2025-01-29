@@ -1,4 +1,5 @@
 ### Custom ignores
+.vimrc
 out/
 build/
 NetworkConfig.c

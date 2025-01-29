@@ -6,30 +6,31 @@
 
 #include "Common.h"
 #include "EnV5HwController.h"
-#include "Esp.h"
 #include "FreeRtosTaskWrapper.h"
-#include "Network.h"
 
 _Noreturn void ledTask(void) {
     while (true) {
-        PRINT("LEDs should now turn on");
         env5HwControllerLedsAllOn();
         freeRtosTaskWrapperTaskSleep(2000);
-        PRINT("LEDs should now turned off");
+
         env5HwControllerLedsAllOff();
         freeRtosTaskWrapperTaskSleep(2000);
+        // or do whatever you want ...
     }
 }
 
-/*! \brief Goes into bootloader mode when 'r' is pressed
- */
-_Noreturn void enterBootModeTask(void) {
+_Noreturn void dataTask(void) {
     while (true) {
-        if (getchar_timeout_us(10) == 'r' || !stdio_usb_connected()) {
-            PRINT_DEBUG("Boot Mode request detected.");
-            reset_usb_boot(0, 0);
-        }
+        PRINT("Show ME!");
+        freeRtosTaskWrapperTaskSleep(1000);
+        // or do whatever you want ...
+    }
+}
 
+_Noreturn void enterBootModeTask(void) {
+    watchdog_enable(2000, 1); // enables watchdog to check for reboots
+
+    while (true) {
         // Watchdog update needs to be performed frequent, otherwise the device will crash
         watchdog_update();
         PRINT_DEBUG("watchdog updated");
@@ -49,19 +50,14 @@ void initializeHardware(void) {
     while ((!stdio_usb_connected())) {
         // waits for usb connection, REMOVE to continue without waiting for connection
     }
-
-    espInit(); // initialize ESP32 module
-
-    watchdog_enable(2000, 1); // enables watchdog to check for reboots
 }
 
 int main() {
     initializeHardware();
 
-    networkTryToConnectToNetworkUntilSuccessful();
-
-    freeRtosTaskWrapperRegisterTask(enterBootModeTask, "enterBootModeTask", 0, FREERTOS_CORE_0);
-    freeRtosTaskWrapperRegisterTask(ledTask, "ledTask", 0, FREERTOS_CORE_1);
+    freeRtosTaskWrapperRegisterTask(enterBootModeTask, "watchdog-task", 0, FREERTOS_CORE_0);
+    freeRtosTaskWrapperRegisterTask(dataTask, "data-task", 0, FREERTOS_CORE_0);
+    freeRtosTaskWrapperRegisterTask(ledTask, "led-task", 0, FREERTOS_CORE_1);
 
     freeRtosTaskWrapperStartScheduler();
 }

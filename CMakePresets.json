@@ -1,0 +1,58 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "build_script_generator",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "build/${presetName}"
+    },
+    {
+      "name": "build_for_ENv5",
+      "hidden": true,
+      "inherits": "build_script_generator",
+      "cacheVariables": {
+        "REVISION": "2"
+      }
+    },
+    {
+      "name": "ENv5_release",
+      "displayName": "EnV5 Release",
+      "inherits": "build_for_ENv5",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      }
+    },
+    {
+      "name": "ENv5_debug",
+      "displayName": "EnV5 Debug",
+      "inherits": "build_for_ENv5",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "DEBUG_MODE": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ENv5",
+      "hidden": true,
+      "jobs": 6
+    },
+    {
+      "name": "ENv5_release",
+      "inherits": "ENv5",
+      "configurePreset": "ENv5_release"
+    },
+    {
+      "name": "ENv5_debug",
+      "inherits": "ENv5",
+      "configurePreset": "ENv5_debug"
+    }
+  ]
+}
