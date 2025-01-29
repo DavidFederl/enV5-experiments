@@ -9,10 +9,9 @@ ifdef::env-github[]
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
-
-[.lead]
-This repository aims to provide a clean start for projects concerning the Elastic-AI Node Version 5 (enV5) hardware platform.
-It includes the hardware support libraries from the https://github.com/es-ude/elastic-ai.runtime.enV5[elastic-ai.runtime.enV5 repository] as well as other required dependencies like the pico-sdk or Unity.
+ifndef::env-github[]
+:icons: font
+endif::[]
 
 toc::[]
 
@@ -31,9 +30,6 @@ For compiling the project, the required tools are:
 . Clone the repo to your local machine
 . Open the project in your preferred C/C++ IDE
 
-NOTE: If you use the CLion IDE as recommended, the build script generation is done by the IDE itself.
-If you want to do this by yourself, please refer to <<CMake>>.
-
 [IMPORTANT]
 ====
 You have to adjust the network/mqtt broker credentials as mentioned in the link:https://github.com/es-ude/elastic-ai.runtime.enV5/blob/d862d803a56f0371f9a027b0f304b9ddfa7cd541/src/network/README.adoc[network README]!
@@ -51,87 +47,19 @@ Alternatively, you can pass these settings via CMake Flags to the Profile initia
 [#_cmake]
 == CMake
 
-There are three CMake Profiles provided with the CLion settings:
-*Debug*, *Release*, and *UnitTests*.
+.CMake Profiles (link:./CMakePresets.json[CMakePresets.json]):
+- *ENv5_debug*
+- *ENv5_release*
 
-Only the _UnitTests_ profile allows you to compile source code for your local machine and therefore run the unit tests.
-The _Debug_ and _Release_ targets differ only in the amount of printed information when the software is executed on an enV5-device.
-
-.Profiles
+.Configure CMake and Build Target
 [source,bash]
 ----
-# Unit-test profile
-cmake -B build/unit-test -G Ninja -D CMAKE_BUILD_TYPE=DEBUG -D UNIT_TEST:BOOL=ON -D DEBUG_MODE:BOOL=ON
+# configure project
+cmake --preset <profile>
 
-# Debug profile
-cmake -B build/debug -G Ninja -D CMAKE_BUILD_TYPE=DEBUG -D UNIT_TEST:BOOL=OFF -D DEBUG_MODE:BOOL=ON
-
-# Release profile
-cmake -B build/release -G Ninja -D CMAKE_BUILD_TYPE=RELEASE -D UNIT_TEST:BOOL=OFF -D DEBUG_MODE:BOOL=OFF
+# build target
+cmake --build --preset <profile>
 ----
-
-The flag `-G Ninja` tells CMake to use Ninja as the build tool.
-If this flag is not passed, CMake will use the default build tool on your machine (mostly Makefiles).
-
-[#_target:_local_machine]
-=== Target: Local Machine
-
-The local execution of the source code requires a different hal implementation, due to the fact that the hal implementation from the `src` folder is directly connected to the pico-sdk which forces the compiler to build for the RP2040 arm-based platform instead of your local machine.
-The enV5 repository provides the hal dummies for the local machine.
-
-[#_unit_tests]
-==== Unit Tests
-
-The unit-tests can be build and executed by running:
-
-[source,bash]
-----
-# build the unit-tests
-cmake --build build/unit-test -j 4 --clean-first
-
-# execute the unit-tests
-ctest --test-dir build/unit-test/test/unit --output-on-failure
-----
-
-The built unit-tests can then be found under
-link:build/unit-test/test/unit[build/unit-tests/test/unit] as executables.
-
-[#_target_pico]
-=== Target Pico
-
-[#_build_all_targets]
-==== Build all Targets
-
-The debug targets can be built by executing:
-
-[source,bash]
-----
-cmake --build build/debug -j 4
-----
-
-The release targets can be built by executing:
-
-[source,bash]
-----
-cmake --build build/release -j 4
-----
-
-The `*.uf2` files to flash the pico can than be found under the
-link:out[out] folder.
-
-[#_hardware_tests]
-==== Hardware Tests
-
-The hardware tests can be build using
-
-[source,bash]
-----
-cmake --build build/debug -j 4 --target <test_name>
-----
-
-replacing `<test_name>` with the name of the test.
-
-The resulting `<test_name>.u2f` files to flash the pico can be found under the link:./out[out] folder.
 
 [#_flashing_the_elastic_node_version_5_env5]
 ==== Flashing the Elastic Node version 5 (enV5)
@@ -174,18 +102,6 @@ To enable enhanced Debug output, add the flag `-D DEBUG_OUTPUT:BOOL=ON`
 to the <<_cmake,CMake Setup call>> (or add it in the CLion CMake options).
 This enables the `PRINT_DEBUG(...)` from the common_lib of the enV5 repository in all targets.
 
-=== Clion specific settings
-
-Clion automatically detects targets and adds them to the configurations in the upper right corner.
-These can be built via one of the profiles.
-There are three profiles in total:
-
-* `Debug`: build targets for the RP2040 with debug logs
-* `Release`: build targets for the RP2040 without debug logs
-* `Unit Test`: regular unit test executables
-
-Switching the profiles also "`fixes`" include paths, so if you have a unit test open, Clion will not recognize the inclusion of the unity.h file, as it is only included under the `Unit Test` profile.
-
 == Project structure
 
 This project contains various folders:
@@ -195,22 +111,9 @@ This project contains various folders:
 |Folder |Description
 
 |link:build[]
-|contains all CMake generated build scripts
-
-|link:out[]
-|contains all executables (`*.uf2` binary files) for the enV5
+|contains all CMake generated build scripts and generated `*.uf2` files
 
 |link:src[]
 |contains _Main.c_, helpers and your own source code
-
-|link:test/hardware/[]
-|contains your own hardware tests
-
-|link:test/unit[]
-|contains your own unit tests
 |===
 
-== Further Reading
-
-* link:https://github.com/es-ude/elastic-ai.runtime.enV5/blob/d862d803a56f0371f9a027b0f304b9ddfa7cd541/README.adoc[enV5 README]
-* link:https://github.com/es-ude/elastic-ai.runtime.enV5/blob/d862d803a56f0371f9a027b0f304b9ddfa7cd541/documentation/SETUP_GUIDE.adoc[enV5 Setup Guide]
