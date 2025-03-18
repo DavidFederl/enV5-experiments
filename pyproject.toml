@@ -1,0 +1,29 @@
+[project]
+name = "elasticai.baseproject"
+dynamic = ["version"]
+description = "elastic-ai base project. A Starting point for your elastic-ai application."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["elasticai"]
+exclude = [
+    "*_test.py",
+    "test_*.py",
+]
+
+[tool.hatch.version]
+source = "vcs"
+
+[dependency-groups]
+dev = [
+    "build>=1.2.2.post1",
+    "hatch>=1.14.1",
+    "hatch-vcs>=0.5.0",
+]

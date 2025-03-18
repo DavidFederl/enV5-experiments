@@ -1,17 +1,13 @@
-### Custom ignores
-NetworkConfig.c
-
-### dev environment
-.envrc
-.tool-versions
-.venv/
-venv/
-node_modules/
-
 ### IDE
-.idea/
 .vimrc
+.idea/
 .vscode/
+
+### devenv
+.devenv/
+.direnv/
+
+### build specific
 build/
 NetworkConfig.c
 
