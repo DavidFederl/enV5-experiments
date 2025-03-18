@@ -1,0 +1,5 @@
+if (BUILDING_FOR_ELASTIC_NODE)
+        add_library(example INTERFACE)
+else ()
+        add_library(example INTERFACE)
+endif ()

@@ -1,13 +1,21 @@
+# add own libraries
+add_subdirectory(example-lib)
+
 # add your own executable
-add_executable(main
-        ${CMAKE_CURRENT_LIST_DIR}/Main.c)
-target_include_directories(main PUBLIC ${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(main
-        pico_stdlib
-        freeRtosUtils
-        esp_lib
-        espBroker_lib
-        network_lib
-        http_lib
-        uart_interface)
-create_enV5_executable(main)
+add_executable(experiment
+        ${CMAKE_CURRENT_LIST_DIR}/experiment.c)
+target_link_libraries(experiment
+        Common
+        EnV5HwConfiguration
+        EnV5HwController
+        Flash
+        UsbProtocol
+
+        CException
+
+        Pico::pico_stdlib
+        Pico::pico_stdio_usb
+        Pico::pico_time
+        Pico::hardware_spi
+)
+create_enV5_executable(experiment)

@@ -1,13 +1,12 @@
 #define SOURCE_FILE "MQTT-PUBLISH-TEST"
 
+#include <stdio.h>
+#include <string.h>
+
 #include "Common.h"
 #include "FreeRtosTaskWrapper.h"
 #include "HardwaretestHelper.h"
-#include "MqttBroker.h"
 #include "Protocol.h"
-#include <malloc.h>
-#include <stdio.h>
-#include <string.h>
 
 /*!
  * Connects to Wi-Fi and MQTT Broker (Change in src/configuration.h). When connected publishes each

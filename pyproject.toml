@@ -4,8 +4,12 @@ dynamic = ["version"]
 description = "elastic-ai base project. A Starting point for your elastic-ai application."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "elasticai-usbprotocol"
+]
 
+[tool.uv.sources]
+elasticai-usbprotocol = { git = "https://github.com/es-ude/elastic-ai.runtime.enV5.git", tag = "v5.6.2" }
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]

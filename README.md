@@ -66,22 +66,70 @@ uv sync --all-groups       # install all python dependencies
 
 > [!NOTE]
 > This project is based on CMake.
+ 
+We provide three predefined profiles with the [CMakePresets.json](CMakePresets.json):
+
+- unit_test
+- env5_rev2_release
+- env5_rev2_debug
+
+These profiles offer the required settings to either build for your local system (_unit_test_) to locally run test,
+or to build for the enV5 Node (_env5_rev2_release_ and _env5_rev_2_debug_).
+The profile with the suffix _debug_ also provides additional console output for debugging purposes.
+
+To initialize the CMake Tool run:
+
+```bash
+# directly
+cmake --preset unit_test
+cmake --preset env5_rev2_debug
+cmake --preset env5_rev2_release
+
+# custom function provided by devenv
+setup_cmake
+```
+
+> [!WARNING]
+> Loading all required external dependencies from the internet can take a while.
+> See [external dependencies](#external-dependencies).
+
+### Local Test Execution
+
+The local execution of the unit tests is possible by using the `ctest` function as follows:
+
+```bash
+# directly
+ctest --preset unit_test
+
+# as a task provided by devenv
+devenv tasks run "check:unit-test"
+```
+
+> [!NOTE]
+> You can then find the unit-test executables under [build/unit-test/test/unit](build/unit-test/test/unit).
 
 ### enV5 Node Execution
 
-The hardware test executables for the enV5 Node can be found under [build/env5_rev2](build/env5_rev2/test/hardware)
-or [build/env5_rev2_debug](build/env5_rev2_debug/test/hardware).
-
-The `*.uf2` files to flash the pico can then be found under their respective subfolders.
+You can find the hardware test executables for the enV5 Node under [build/env5_rev2_release](build/env5_rev2/test/hardware) or [build/env5_rev2_debug](build/env5_rev2_debug/test/hardware).
+You can then find the `*.uf2` files to flash the pico inside their directories.
 
 ### Flash the enV5
+
+Run
+
+```bash
+# script provided by devenv
+flash_node <path_to_uf2>
+```
+
+**OR**
 
 1. Press and hold `MCU BOOT` on the enV5 Node
 2. Press `MCU RST` on the enV5 Node
 3. Release `MCU BOOT`
 4. Copy the `*.uf2` File to the RPI-RP2 device
-    * Via the USB device through your file manager
-    * Via the command line by executing `sudo cp <file>.uf2 /dev/sdX`
+   - Via the USB device through your file manager
+   - Via the command line by executing `sudo cp <file>.uf2 /dev/sdX`
 
 ### Get Output from the enV5 Node
 
