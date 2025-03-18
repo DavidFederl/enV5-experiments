@@ -10,14 +10,17 @@ remote: UserRemoteControl
 def init():
     global remote
     env5_serial = Serial(port=get_env5_port())
-    print(f"Connected to {env5_serial}")
+    print(env5_serial)
     remote = UserRemoteControl(device=env5_serial)
 
 def experiement():
     global remote
     remote.mcu_leds(True, True, True)
 
-    sleep(3.0)
+    with open("fpga.bit","rb") as bit_file:
+        fpga_config = bit_file.read()
+        remote.send_data_to_flash(0, fpga_config)
+    remote.fpga_power_on(True)
 
     remote.mcu_leds(False, False, False)
 
